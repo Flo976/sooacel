@@ -48,7 +48,7 @@ export async function listProjects(token, teamId) {
 
   try {
     do {
-      const params = { limit: 100, ...(from !== undefined ? { from } : {}) };
+      const params = { limit: "100", ...(from !== undefined ? { from } : {}) };
       if (teamId) params.teamId = teamId;
 
       const res = await vercel.projects.getProjects(params);
@@ -81,7 +81,7 @@ export async function listEnvVars(token, projectId, teamId) {
     do {
       const params = {
         idOrName: projectId,
-        decrypt: true,
+        decrypt: "true",
         ...(from !== undefined ? { from } : {}),
       };
       if (teamId) params.teamId = teamId;
@@ -125,7 +125,7 @@ export async function createEnvVar(
   try {
     const params = {
       idOrName: projectId,
-      upsert: true,
+      upsert: "true",
       requestBody: { key, value, type, target, comment },
     };
     if (teamId) params.teamId = teamId;
