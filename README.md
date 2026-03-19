@@ -133,13 +133,23 @@ sooacel/
 
 ---
 
-## Comptes configures
+## Ajouter un compte Vercel
 
-| Alias dans .env | Compte Vercel | Type |
-|-----------------|---------------|------|
-| `VERCEL_TOKEN_DEXYU` | Dexyu | Team |
-| `VERCEL_TOKEN_EANET` | Eanet | Personnel |
-| `VERCEL_TOKEN_SOOATEK` | Sooatek | Personnel |
+Le CLI detecte automatiquement tous les `VERCEL_TOKEN_*` presents dans `~/.sooacel/.env`.
+
+Pour ajouter un nouveau compte client, ajoutez simplement une ligne :
+
+```env
+VERCEL_TOKEN_NOMCLIENT=vcp_xxx
+```
+
+Si le compte est en mode **team**, ajoutez aussi le team ID :
+
+```env
+VERCEL_TEAM_NOMCLIENT=team_xxx
+```
+
+Le compte apparaitra automatiquement dans le wizard au prochain lancement — aucune modification du code necessaire.
 
 ---
 
