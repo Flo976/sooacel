@@ -1,13 +1,13 @@
 # Guide d'utilisation — CLI sooacel
 
-Ce guide est destine aux developpeurs Sooatek. Toutes les commandes sont a copier-coller directement.
+Ce guide est destine aux developpeurs qui utilisent `sooacel` au quotidien.
 
 ---
 
 ## 1. Prerequis
 
-- Le script d'installation a ete lance par l'admin (`setup/install.sh` ou `setup/install.ps1`)
-- Le fichier `.env` a ete rempli par l'admin avec les tokens Vercel valides
+- Le script d'installation a ete lance (`setup/install.sh` ou `setup/install.ps1`)
+- Le fichier `~/.sooacel/.env` a ete rempli avec les tokens Vercel valides
 - La commande `sooacel` est disponible dans votre shell
 
 ---
@@ -20,7 +20,7 @@ Verifiez que le CLI est correctement installe :
 sooacel --version
 ```
 
-La commande affiche le numero de version du CLI. Si la commande n'est pas reconnue, voir la section [Troubleshooting](#8-troubleshooting).
+Si la commande n'est pas reconnue, voir la section [Troubleshooting](#7-troubleshooting).
 
 ---
 
@@ -32,7 +32,7 @@ La commande sans argument lance le wizard interactif :
 sooacel
 ```
 
-Le wizard vous guide pas a pas : choix du compte, choix du projet, choix de l'action. C'est le point d'entree recommande pour les operations courantes.
+Le wizard vous guide pas a pas : choix du compte, choix du projet, choix de l'action.
 
 ---
 
@@ -44,7 +44,7 @@ Le wizard vous guide pas a pas : choix du compte, choix du projet, choix de l'ac
 sooacel ls
 ```
 
-Flow interactif : selection du compte → selection du projet → affichage des variables avec leurs cibles (production, preview, development).
+Selection du compte → selection du projet → affichage des variables avec leurs cibles (production, preview, development).
 
 ---
 
@@ -54,7 +54,7 @@ Flow interactif : selection du compte → selection du projet → affichage des 
 sooacel set
 ```
 
-Flow interactif : selection du compte → selection du projet → saisie du nom de la variable → saisie de la valeur → selection des cibles (production, preview, development). Si la variable existe deja, elle est mise a jour (upsert).
+Selection du compte → selection du projet → saisie du nom → valeur → type → cibles. Si la variable existe deja, confirmation avant mise a jour.
 
 ---
 
@@ -64,7 +64,7 @@ Flow interactif : selection du compte → selection du projet → saisie du nom 
 sooacel edit
 ```
 
-Flow interactif : selection du compte → selection du projet → selection de la variable → modification de la valeur et/ou des cibles.
+Selection du compte → selection du projet → selection de la variable → nouvelle valeur.
 
 ---
 
@@ -74,7 +74,7 @@ Flow interactif : selection du compte → selection du projet → selection de l
 sooacel rm
 ```
 
-Flow interactif : selection du compte → selection du projet → selection de la variable → confirmation → suppression.
+Selection du compte → selection du projet → selection de la variable → confirmation → suppression.
 
 ---
 
@@ -84,7 +84,7 @@ Flow interactif : selection du compte → selection du projet → selection de l
 sooacel pull
 ```
 
-Flow interactif : selection du compte → selection du projet → selection de l'environnement (development, preview, production) → creation d'un fichier `.env.local` dans le repertoire courant.
+Selection du compte → selection du projet → selection de l'environnement → creation d'un fichier `.env.local` dans le repertoire courant.
 
 > **Attention :** le fichier `.env.local` ne doit pas etre commite. Verifiez qu'il est bien dans votre `.gitignore`.
 
@@ -96,23 +96,9 @@ Flow interactif : selection du compte → selection du projet → selection de l
 sooacel --help
 ```
 
-Affiche la liste de toutes les sous-commandes et leurs options.
-
 ---
 
-## 6. Comptes disponibles
-
-| Compte  | Type  |
-|---------|-------|
-| Dexyu   | Team  |
-| Eanet   | Perso |
-| Sooatek | Perso |
-
-Le wizard interactif propose ces comptes a la selection automatiquement.
-
----
-
-## 7. Aide memoire rapide
+## 6. Aide memoire rapide
 
 | Action | Commande |
 |--------|----------|
@@ -127,11 +113,11 @@ Le wizard interactif propose ces comptes a la selection automatiquement.
 
 ---
 
-## 8. Troubleshooting
+## 7. Troubleshooting
 
 | Erreur | Cause probable | Solution |
 |--------|----------------|----------|
-| `Error: Not authorized` (401) | Token expire ou invalide | Contacter l'admin pour renouveler le token dans `.env` |
-| `Error: Forbidden` (403) | Pas les permissions sur ce projet ou cet environnement | Contacter l'admin pour verifier les droits |
+| `Error: Not authorized` (401) | Token expire ou invalide | Contacter l'admin pour renouveler le token |
+| `Error: Forbidden` (403) | Pas les permissions sur ce projet | Contacter l'admin pour verifier les droits |
 | `Error: Rate limited` (429) | Trop de requetes en peu de temps | Attendre quelques minutes puis reessayer |
 | Commande `sooacel` non reconnue | Le CLI n'est pas dans le PATH | Recharger le shell : `source ~/.bashrc` ou `. $PROFILE` |

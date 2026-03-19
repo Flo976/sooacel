@@ -157,7 +157,7 @@ Content-Type: application/json
   "type": "encrypted",
   "target": ["production", "preview", "development"],
   "gitBranch": null,
-  "comment": "Ajoute par dev X via l'outil interne"
+  "comment": "Ajoute par dev X via sooacel"
 }
 ```
 

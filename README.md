@@ -7,16 +7,23 @@
 ╚══════╝  ╚═════╝   ╚═════╝  ╚═╝  ╚═╝  ╚═════╝ ╚══════╝ ╚══════╝
 ```
 
-**CLI interne Sooatek pour gerer les variables d'environnement Vercel.**
+**CLI interactive pour gerer les variables d'environnement Vercel multi-comptes.**
 
-Gerez les VE de tous vos comptes clients Vercel depuis un seul outil interactif, sans avoir besoin d'un compte Vercel par developpeur.
+Gerez les VE de tous vos comptes Vercel depuis un seul outil interactif, sans avoir besoin d'un compte Vercel par developpeur.
 
 ---
+
+## Pourquoi Sooacel ?
+
+- Vous gerez **plusieurs comptes/clients Vercel** et voulez un point d'entree unique
+- Vous ne voulez pas creer un **compte Vercel par developpeur** (facturation par siege)
+- La CLI Vercel officielle est **interactive de maniere non controlable** et n'a pas de `env edit`
+- Vous voulez une UX **simple et guidee** pour les devs qui ne connaissent pas Vercel
 
 ## Fonctionnalites
 
 - **Wizard interactif** — selection du compte, projet et action avec menus navigables
-- **Multi-comptes** — ajoutez autant de comptes Vercel que necessaire, detection automatique
+- **Multi-comptes dynamique** — ajoutez autant de comptes Vercel que necessaire, detection automatique
 - **CRUD complet** — lister, ajouter, modifier, supprimer les variables d'environnement
 - **Pull local** — tire les VE dans un `.env.local` pour le dev local
 - **Sous-commandes** — `sooacel ls`, `set`, `edit`, `rm`, `pull` pour aller vite
@@ -29,14 +36,14 @@ Gerez les VE de tous vos comptes clients Vercel depuis un seul outil interactif,
 ### 1. Installation
 
 ```bash
-# Cloner le repo
 git clone https://github.com/Flo976/sooacel.git
 cd sooacel
 
-# Lancer le script d'installation
-bash setup/install.sh        # Linux / macOS
-# ou
-powershell -ExecutionPolicy Bypass -File setup/install.ps1   # Windows
+# Linux / macOS
+bash setup/install.sh
+
+# Windows (PowerShell)
+powershell -ExecutionPolicy Bypass -File setup/install.ps1
 ```
 
 Le script :
@@ -45,11 +52,19 @@ Le script :
 - Cree `~/.sooacel/` avec un template `.env`
 - Ajoute l'alias `sooacel` a votre shell
 
-### 2. Configuration (admin)
+### 2. Configuration
 
-Un admin genere les tokens Vercel et remplit `~/.sooacel/.env` sur chaque poste dev.
+Generez un [token Vercel](https://vercel.com/account/tokens) pour chaque compte a gerer, puis remplissez `~/.sooacel/.env` :
 
-> Voir le guide complet : [`guides/ADMIN-SETUP.md`](guides/ADMIN-SETUP.md)
+```env
+VERCEL_TOKEN_CLIENTA=vcp_xxx
+VERCEL_TOKEN_CLIENTB=vcp_yyy
+
+# Pour les comptes en mode team :
+VERCEL_TEAM_CLIENTA=team_xxx
+```
+
+> Guide complet : [`guides/ADMIN-SETUP.md`](guides/ADMIN-SETUP.md)
 
 ### 3. Utilisation
 
@@ -69,7 +84,7 @@ sooacel --help
 sooacel --version
 ```
 
-> Voir le guide complet : [`guides/DEV-USAGE.md`](guides/DEV-USAGE.md)
+> Guide complet : [`guides/DEV-USAGE.md`](guides/DEV-USAGE.md)
 
 ---
 
@@ -78,21 +93,39 @@ sooacel --version
 ```
 $ sooacel set
 
-   ███████╗  ██████╗   ██████╗   █████╗   ██████╗ ███████╗ ██╗
-   ...
-
+   ███████╗  ██████╗   ██████╗  ...
    Vercel Env Manager — by sooatek.
 
-? Compte Vercel : Dexyu (team)
-? Projet : app
+? Compte Vercel : ClientA (team)
+? Projet : my-app
 ? Nom de la variable : DATABASE_URL
 ? Valeur : ********
 ? Type : encrypted (defaut recommande)
 ? Environnements : production, preview
-? Commentaire : Ajoute par Rina
+? Commentaire : Added by dev
 
-✅ Variable DATABASE_URL ajoutee sur app (production, preview)
+✅ Variable DATABASE_URL ajoutee sur my-app (production, preview)
 ```
+
+---
+
+## Ajouter un compte Vercel
+
+Le CLI detecte automatiquement tous les `VERCEL_TOKEN_*` presents dans `~/.sooacel/.env`.
+
+Pour ajouter un nouveau compte :
+
+```env
+VERCEL_TOKEN_NEWCLIENT=vcp_xxx
+```
+
+Si le compte est en mode **team**, ajoutez aussi le team ID :
+
+```env
+VERCEL_TEAM_NEWCLIENT=team_xxx
+```
+
+Le compte apparaitra automatiquement dans le wizard — aucune modification du code necessaire.
 
 ---
 
@@ -133,26 +166,6 @@ sooacel/
 
 ---
 
-## Ajouter un compte Vercel
-
-Le CLI detecte automatiquement tous les `VERCEL_TOKEN_*` presents dans `~/.sooacel/.env`.
-
-Pour ajouter un nouveau compte client, ajoutez simplement une ligne :
-
-```env
-VERCEL_TOKEN_NOMCLIENT=vcp_xxx
-```
-
-Si le compte est en mode **team**, ajoutez aussi le team ID :
-
-```env
-VERCEL_TEAM_NOMCLIENT=team_xxx
-```
-
-Le compte apparaitra automatiquement dans le wizard au prochain lancement — aucune modification du code necessaire.
-
----
-
 ## Stack technique
 
 | Composant | Technologie | Role |
@@ -173,13 +186,12 @@ Le compte apparaitra automatiquement dans le wizard au prochain lancement — au
 
 ---
 
-## Guides
+## Documentation
 
 | Guide | Description |
 |-------|-------------|
 | [`ADMIN-SETUP.md`](guides/ADMIN-SETUP.md) | Generer les tokens, installer sur les postes dev, rotation |
 | [`DEV-USAGE.md`](guides/DEV-USAGE.md) | Utilisation quotidienne, commandes, troubleshooting |
-| [`SPECS-VERCEL-ENV-MANAGER.md`](SPECS-VERCEL-ENV-MANAGER.md) | Specs techniques, reference API Vercel |
 
 ---
 
@@ -187,9 +199,15 @@ Le compte apparaitra automatiquement dans le wizard au prochain lancement — au
 
 - [ ] `sooacel projects add` — creer un projet Vercel
 - [ ] Audit trail local (`~/.sooacel/audit.log`)
-- [ ] Mode non-interactif (`sooacel set --account dexyu --project app --key X --value Y`)
+- [ ] Mode non-interactif (`sooacel set --account x --project y --key K --value V`)
 - [ ] Diff entre environnements (production vs preview vs development)
 - [ ] Batch import depuis un fichier `.env`
+
+---
+
+## Licence
+
+MIT
 
 ---
 
