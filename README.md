@@ -146,7 +146,7 @@ sooacel/
 ├── guides/
 │   ├── ADMIN-SETUP.md   # Guide admin
 │   └── DEV-USAGE.md     # Guide dev
-├── skill/
+├── sooacel-skill/
 │   └── SKILL.md         # Skill Claude Code
 └── package.json
 ```
@@ -232,7 +232,7 @@ Un skill est inclus dans le repo pour permettre a Claude Code de gerer les VE Ve
 ### Installation
 
 ```bash
-claude skill add /chemin/vers/sooacel/skill
+cp -r /chemin/vers/sooacel/sooacel-skill ~/.claude/skills/sooacel
 ```
 
 ### Utilisation
