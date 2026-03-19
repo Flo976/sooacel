@@ -4,11 +4,8 @@ import { homedir, platform } from 'node:os';
 
 const ENV_PATH = join(homedir(), '.sooacel', '.env');
 
-const ACCOUNTS = [
-  { name: "Dexyu (team)", key: "dexyu", tokenVar: "VERCEL_TOKEN_DEXYU", teamIdVar: "VERCEL_TEAM_DEXYU" },
-  { name: "Eanet", key: "eanet", tokenVar: "VERCEL_TOKEN_EANET", teamIdVar: null },
-  { name: "Sooatek", key: "sooatek", tokenVar: "VERCEL_TOKEN_SOOATEK", teamIdVar: null },
-];
+const TOKEN_PREFIX = "VERCEL_TOKEN_";
+const TEAM_PREFIX = "VERCEL_TEAM_";
 
 const LINE_REGEX = /^\s*([A-Z_][A-Z0-9_]*)\s*=\s*["']?(.*?)["']?\s*$/;
 
@@ -55,11 +52,22 @@ export function loadAccounts() {
     throw err;
   }
 
-  return ACCOUNTS
-    .map(({ name, key, tokenVar, teamIdVar }) => {
-      const token = vars[tokenVar] ?? '';
-      const teamId = teamIdVar ? (vars[teamIdVar] ?? null) : null;
-      return { name, key, token, teamId };
-    })
-    .filter(({ token }) => token !== '');
+  const accounts = [];
+
+  for (const [varName, value] of Object.entries(vars)) {
+    if (!varName.startsWith(TOKEN_PREFIX) || !value) continue;
+
+    const key = varName.slice(TOKEN_PREFIX.length).toLowerCase();
+    const name = varName.slice(TOKEN_PREFIX.length);
+    const teamId = vars[TEAM_PREFIX + name] || null;
+    const displayName = teamId ? `${capitalize(key)} (team)` : capitalize(key);
+
+    accounts.push({ name: displayName, key, token: value, teamId });
+  }
+
+  return accounts;
+}
+
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
