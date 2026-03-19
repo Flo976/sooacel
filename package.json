@@ -1,0 +1,17 @@
+{
+  "name": "sooacel",
+  "version": "1.0.0",
+  "description": "CLI interne Sooatek pour gerer les variables d'environnement Vercel",
+  "type": "module",
+  "bin": {
+    "sooacel": "./bin/sooacel.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@vercel/sdk": "^1",
+    "@inquirer/prompts": "^7",
+    "chalk": "^5"
+  }
+}
