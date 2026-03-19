@@ -1,4 +1,4 @@
-# Guide d'utilisation - Gestion des variables d'environnement Vercel
+# Guide d'utilisation — CLI sooacel
 
 Ce guide est destine aux developpeurs Sooatek. Toutes les commandes sont a copier-coller directement.
 
@@ -6,117 +6,132 @@ Ce guide est destine aux developpeurs Sooatek. Toutes les commandes sont a copie
 
 ## 1. Prerequis
 
-- Le script d'installation a ete lance par l'admin (`setup/install.sh`)
+- Le script d'installation a ete lance par l'admin (`setup/install.sh` ou `setup/install.ps1`)
 - Le fichier `.env` a ete rempli par l'admin avec les tokens Vercel valides
-- Les aliases `ve-xxx` sont disponibles dans votre shell
+- La commande `sooacel` est disponible dans votre shell
 
 ---
 
 ## 2. Verification
 
-Verifiez que votre environnement est operationnel :
+Verifiez que le CLI est correctement installe :
 
 ```bash
-ve-dexyu whoami
+sooacel --version
 ```
 
-La commande doit afficher les informations du compte Dexyu. Si ce n'est pas le cas, voir la section [Troubleshooting](#10-troubleshooting).
+La commande affiche le numero de version du CLI. Si la commande n'est pas reconnue, voir la section [Troubleshooting](#8-troubleshooting).
 
 ---
 
-## 3. Comptes disponibles
+## 3. Usage principal — wizard interactif
 
-| Alias      | Compte Vercel | Type  |
-|------------|---------------|-------|
-| ve-dexyu   | Dexyu         | Team  |
-| ve-eanet   | Eanet         | Perso |
-| ve-theo    | Theo          | Perso |
-| ve-sooatek | Sooatek       | Perso |
+La commande sans argument lance le wizard interactif :
 
-Utilisez l'alias correspondant au compte sur lequel se trouve le projet cible.
+```bash
+sooacel
+```
+
+Le wizard vous guide pas a pas : choix du compte, choix du projet, choix de l'action. C'est le point d'entree recommande pour les operations courantes.
 
 ---
 
-## 4. Lister les projets
+## 4. Sous-commandes disponibles
+
+### `sooacel ls` — Lister les variables d'environnement
 
 ```bash
-ve-dexyu project ls
+sooacel ls
 ```
 
-Affiche tous les projets du compte Dexyu.
+Flow interactif : selection du compte → selection du projet → affichage des variables avec leurs cibles (production, preview, development).
 
 ---
 
-## 5. Lister les variables d'environnement d'un projet
+### `sooacel set` — Ajouter ou mettre a jour une variable
 
 ```bash
-ve-dexyu env ls --project app
+sooacel set
 ```
 
-Remplacez `app` par le nom du projet souhaite.
+Flow interactif : selection du compte → selection du projet → saisie du nom de la variable → saisie de la valeur → selection des cibles (production, preview, development). Si la variable existe deja, elle est mise a jour (upsert).
 
 ---
 
-## 6. Ajouter une variable d'environnement
-
-### Mode guide (la CLI pose les questions)
+### `sooacel edit` — Modifier une variable existante
 
 ```bash
-ve-dexyu env add --project app
+sooacel edit
 ```
 
-La CLI vous demande successivement : le nom de la variable, sa valeur, et les environnements cibles (development, preview, production).
-
-### Mode direct
-
-```bash
-ve-dexyu env add MA_VAR production --project app
-```
-
-Apres cette commande, saisissez la valeur de la variable quand la CLI vous la demande, puis validez avec Entree.
+Flow interactif : selection du compte → selection du projet → selection de la variable → modification de la valeur et/ou des cibles.
 
 ---
 
-## 7. Modifier une variable d'environnement
-
-La CLI Vercel ne dispose pas de commande `env edit`. Il faut supprimer la variable puis la recreer.
+### `sooacel rm` — Supprimer une variable
 
 ```bash
-ve-theo env rm MA_VAR --project sos-lunettes-front --environment production
-ve-theo env add MA_VAR production --project sos-lunettes-front
+sooacel rm
 ```
 
-Saisissez la nouvelle valeur quand la CLI vous la demande.
+Flow interactif : selection du compte → selection du projet → selection de la variable → confirmation → suppression.
 
 ---
 
-## 8. Supprimer une variable d'environnement
+### `sooacel pull` — Tirer les variables en local
 
 ```bash
-ve-eanet env rm MA_VAR --project pwa --environment production
+sooacel pull
 ```
 
-Remplacez `MA_VAR`, `pwa` et `production` par les valeurs appropriees.
-
----
-
-## 9. Tirer les variables d'environnement en local
-
-```bash
-ve-dexyu env pull --project app --environment development
-```
-
-Cree un fichier `.env.local` dans le repertoire courant avec toutes les variables de l'environnement `development` du projet `app`.
+Flow interactif : selection du compte → selection du projet → selection de l'environnement (development, preview, production) → creation d'un fichier `.env.local` dans le repertoire courant.
 
 > **Attention :** le fichier `.env.local` ne doit pas etre commite. Verifiez qu'il est bien dans votre `.gitignore`.
 
 ---
 
-## 10. Troubleshooting
+## 5. Aide
 
-| Erreur                          | Cause probable                                      | Solution                                              |
-|---------------------------------|-----------------------------------------------------|-------------------------------------------------------|
-| `Error: Not authorized` (401)   | Token expire ou invalide                            | Contacter l'admin pour renouveler le token dans `.env` |
-| `Error: Forbidden` (403)        | Pas les permissions sur ce projet ou cet environnement | Contacter l'admin pour verifier les droits             |
-| `Error: Rate limited` (429)     | Trop de requetes en peu de temps                    | Attendre quelques minutes puis reessayer              |
-| Commande `ve-xxx` non reconnue  | Les aliases ne sont pas charges dans le shell       | Recharger le shell : `source ~/.bashrc` ou `. $PROFILE` |
+```bash
+sooacel --help
+```
+
+Affiche la liste de toutes les sous-commandes et leurs options.
+
+---
+
+## 6. Comptes disponibles
+
+| Compte  | Type  |
+|---------|-------|
+| Dexyu   | Team  |
+| Eanet   | Perso |
+| Sooatek | Perso |
+
+Le wizard interactif propose ces comptes a la selection automatiquement.
+
+---
+
+## 7. Aide memoire rapide
+
+| Action | Commande |
+|--------|----------|
+| Wizard complet | `sooacel` |
+| Lister les variables | `sooacel ls` |
+| Ajouter / mettre a jour | `sooacel set` |
+| Modifier | `sooacel edit` |
+| Supprimer | `sooacel rm` |
+| Tirer en local | `sooacel pull` |
+| Aide | `sooacel --help` |
+| Version | `sooacel --version` |
+
+---
+
+## 8. Troubleshooting
+
+| Erreur | Cause probable | Solution |
+|--------|----------------|----------|
+| `Error: Not authorized` (401) | Token expire ou invalide | Contacter l'admin pour renouveler le token dans `.env` |
+| `Error: Forbidden` (403) | Pas les permissions sur ce projet ou cet environnement | Contacter l'admin pour verifier les droits |
+| `Error: Rate limited` (429) | Trop de requetes en peu de temps | Attendre quelques minutes puis reessayer |
+| Commande `sooacel` non reconnue | Le CLI n'est pas dans le PATH | Recharger le shell : `source ~/.bashrc` ou `. $PROFILE` |

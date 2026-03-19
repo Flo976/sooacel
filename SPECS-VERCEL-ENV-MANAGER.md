@@ -2,12 +2,15 @@
 
 ## Decision
 
-Apres analyse, l'approche retenue est l'utilisation directe de la **CLI Vercel**
-avec des aliases shell (`ve-*`) et un fichier de tokens centralise par poste dev.
-
-L'approche initiale (web UI custom avec Next.js, JWT, SQLite) a ete abandonnee :
-la CLI Vercel couvre deja le CRUD des VE, et l'audit trail / ACL granulaire
+**Pivot 1** : l'approche initiale (web UI custom avec Next.js, JWT, SQLite) a ete abandonnee.
+La CLI Vercel couvre deja le CRUD des VE, et l'audit trail / ACL granulaire
 ne sont pas critiques pour une equipe de 4-5 devs de confiance.
+
+**Pivot 2** : les aliases shell `ve-*` ont ete remplaces par un CLI maison `sooacel`.
+Les aliases necesitaient une modification du shell RC de chaque poste et etaient
+difficilement extensibles. Un CLI Node.js installe globalement (`bin/sooacel.js`)
+offre une meilleure portabilite, un wizard interactif unifie, et une surface
+d'evolution plus propre (ajout de sous-commandes, tests, packaging).
 
 ## Probleme
 
@@ -18,31 +21,45 @@ ne sont pas critiques pour une equipe de 4-5 devs de confiance.
 
 ## Solution
 
-Un fichier `.env` local (`~/.sooacel/.env`) contenant un token Vercel par compte
-client, et des fonctions shell (`ve-dexyu`, `ve-eanet`, `ve-theo`, `ve-sooatek`)
-qui injectent le bon token avant d'appeler la CLI Vercel.
+Un CLI Node.js (`sooacel`) installe globalement sur le poste dev.
+Il lit un fichier `.env` local (`~/.sooacel/.env`) contenant un token Vercel par
+compte client, puis expose un wizard interactif et des sous-commandes
+(`ls`, `set`, `edit`, `rm`, `pull`) qui appellent l'API Vercel REST via `@vercel/sdk`.
 
 ## Architecture
 
 ```
 Poste dev (Linux/macOS/Windows)
 ├── ~/.sooacel/.env           ← tokens Vercel (1 par compte client)
-├── ~/.bashrc ou ~/.zshrc     ← fonctions ve-* (Linux/macOS)
-└── $PROFILE PowerShell       ← fonctions ve-* (Windows)
+└── $(npm bin -g)/sooacel     ← CLI installe globalement
          |
          v
-    CLI Vercel → Vercel REST API
+    bin/sooacel.js            ← point d'entree, parsing des sous-commandes
+         |
+         +-- src/config.js    ← lecture du .env, liste des comptes
+         +-- src/api.js       ← appels Vercel REST via @vercel/sdk
+         +-- src/prompts.js   ← wizard interactif (inquirer)
+         +-- src/display.js   ← formatage de la sortie console
+         |
+         v
+    @vercel/sdk → Vercel REST API
 ```
 
 ## Livrables
 
 | Fichier | Description |
 |---------|-------------|
-| `setup/install.sh` | Script d'installation Linux/macOS |
+| `package.json` | Manifest Node.js, dependances (`@vercel/sdk`, `inquirer`, `dotenv`), bin entry |
+| `bin/sooacel.js` | Point d'entree du CLI, parsing des sous-commandes et options |
+| `src/config.js` | Lecture du `.env`, construction de la liste des comptes disponibles |
+| `src/api.js` | Fonctions d'appel a l'API Vercel REST via `@vercel/sdk` |
+| `src/prompts.js` | Wizard interactif (selection compte, projet, action, valeurs) |
+| `src/display.js` | Formatage et affichage des resultats dans le terminal |
+| `setup/install.sh` | Script d'installation Linux/macOS (npm install -g, copie du .env) |
 | `setup/install.ps1` | Script d'installation Windows |
 | `setup/.env.template` | Template .env a remplir par l'admin |
 | `guides/ADMIN-SETUP.md` | Guide admin : tokens, installation, rotation |
-| `guides/DEV-USAGE.md` | Guide dev : commandes quotidiennes |
+| `guides/DEV-USAGE.md` | Guide dev : sous-commandes sooacel, wizard, troubleshooting |
 
 ## API Vercel REST — Endpoints utilises
 
