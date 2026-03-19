@@ -146,6 +146,8 @@ sooacel/
 ├── guides/
 │   ├── ADMIN-SETUP.md   # Guide admin
 │   └── DEV-USAGE.md     # Guide dev
+├── skill/
+│   └── SKILL.md         # Skill Claude Code
 └── package.json
 ```
 
@@ -195,11 +197,61 @@ sooacel/
 
 ---
 
+## Mode non-interactif
+
+Toutes les sous-commandes supportent un mode 100% non-interactif via des flags :
+
+```bash
+# Lister
+sooacel ls --account clienta --project my-app
+
+# Ajouter
+sooacel set --account clienta --project my-app \
+  --key DATABASE_URL --value "postgres://..." \
+  --target production,preview --yes
+
+# Modifier
+sooacel edit --account clienta --project my-app \
+  --key DATABASE_URL --value "new-value"
+
+# Supprimer
+sooacel rm --account clienta --project my-app --key OLD_VAR --yes
+
+# Pull en local
+sooacel pull --account clienta --project my-app --environment development --yes
+```
+
+Le flag `--yes` / `-y` skip toutes les confirmations. Ideal pour le scripting et l'integration avec des outils comme Claude Code.
+
+---
+
+## Skill Claude Code
+
+Un skill est inclus dans le repo pour permettre a Claude Code de gerer les VE Vercel directement en conversation.
+
+### Installation
+
+```bash
+claude skill add /chemin/vers/sooacel/skill
+```
+
+### Utilisation
+
+Une fois le skill installe, vous pouvez demander a Claude Code :
+
+- "Liste les variables d'environnement du projet app sur dexyu"
+- "Ajoute DATABASE_URL=postgres://... sur le projet my-app de clienta en production"
+- "Supprime la variable OLD_KEY du projet pwa sur eanet"
+- "Pull les VE de development pour le projet app de dexyu"
+
+Claude Code utilisera automatiquement le CLI `sooacel` en mode non-interactif.
+
+---
+
 ## Evolutions prevues
 
 - [ ] `sooacel projects add` — creer un projet Vercel
 - [ ] Audit trail local (`~/.sooacel/audit.log`)
-- [ ] Mode non-interactif (`sooacel set --account x --project y --key K --value V`)
 - [ ] Diff entre environnements (production vs preview vs development)
 - [ ] Batch import depuis un fichier `.env`
 
