@@ -16,7 +16,7 @@ Gerez les VE de tous vos comptes clients Vercel depuis un seul outil interactif,
 ## Fonctionnalites
 
 - **Wizard interactif** — selection du compte, projet et action avec menus navigables
-- **Multi-comptes** — Dexyu (team), Eanet, Sooatek en un seul outil
+- **Multi-comptes** — ajoutez autant de comptes Vercel que necessaire, detection automatique
 - **CRUD complet** — lister, ajouter, modifier, supprimer les variables d'environnement
 - **Pull local** — tire les VE dans un `.env.local` pour le dev local
 - **Sous-commandes** — `sooacel ls`, `set`, `edit`, `rm`, `pull` pour aller vite
@@ -30,7 +30,7 @@ Gerez les VE de tous vos comptes clients Vercel depuis un seul outil interactif,
 
 ```bash
 # Cloner le repo
-git clone git@github.com:sooatek/sooacel.git
+git clone https://github.com/Flo976/sooacel.git
 cd sooacel
 
 # Lancer le script d'installation
