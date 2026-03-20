@@ -48,6 +48,7 @@ Options (mode non-interactif):
   --environment <env>   Environnement pour pull: development, preview, production
   --comment <texte>     Commentaire optionnel
   --yes, -y             Skip les confirmations
+  --show-values         Afficher les valeurs en clair (ls uniquement)
 
 Options generales:
   --help, -h            Afficher cette aide
@@ -84,6 +85,9 @@ function parseArgs(argv) {
     const arg = args[i];
     if (arg === "--yes" || arg === "-y") {
       result.flags.yes = true;
+      i++;
+    } else if (arg === "--show-values") {
+      result.flags.showValues = true;
       i++;
     } else if (arg === "--help" || arg === "-h") {
       result.flags.help = true;
@@ -147,7 +151,7 @@ async function resolveEnvVar(token, projectName, teamId, flags) {
 async function actionLs(token, teamId, accountName, flags) {
   const project = await resolveProject(token, teamId, flags);
   const vars = await listEnvVars(token, project.name, teamId);
-  showEnvVarList(vars, project.name, accountName);
+  showEnvVarList(vars, project.name, accountName, { showValues: !!flags.showValues });
 }
 
 async function actionSet(token, teamId, flags) {

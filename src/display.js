@@ -12,7 +12,7 @@ export function showWarning(message) {
   console.log(chalk.yellow(`⚠️  ${message}`));
 }
 
-export function showEnvVarList(vars, projectName, accountName) {
+export function showEnvVarList(vars, projectName, accountName, { showValues = false } = {}) {
   if (!vars || vars.length === 0) {
     console.log("  Aucune variable d'environnement.");
     return;
@@ -22,10 +22,11 @@ export function showEnvVarList(vars, projectName, accountName) {
   console.log(`  Variables d'environnement — ${projectName} (${accountName})`);
   console.log("");
 
-  const headers = { name: "Nom", type: "Type", envs: "Environnements" };
+  const headers = { name: "Nom", value: "Valeur", type: "Type", envs: "Environnements" };
 
   const rows = vars.map((v) => ({
     name: v.key || v.name || "",
+    value: showValues ? (v.value || "") : maskValue(v.value),
     type: v.type || "",
     envs: Array.isArray(v.target)
       ? v.target.join(", ")
@@ -34,24 +35,19 @@ export function showEnvVarList(vars, projectName, accountName) {
         : "",
   }));
 
-  const colName = Math.max(
-    headers.name.length,
-    ...rows.map((r) => r.name.length)
-  );
-  const colType = Math.max(
-    headers.type.length,
-    ...rows.map((r) => r.type.length)
-  );
+  const colName = Math.max(headers.name.length, ...rows.map((r) => r.name.length));
+  const colValue = Math.max(headers.value.length, ...rows.map((r) => r.value.length));
+  const colType = Math.max(headers.type.length, ...rows.map((r) => r.type.length));
 
   const pad = (str, width) => str + " ".repeat(Math.max(0, width - str.length));
 
   console.log(
-    `  ${chalk.bold(pad(headers.name, colName))}   ${chalk.bold(pad(headers.type, colType))}   ${chalk.bold(headers.envs)}`
+    `  ${chalk.bold(pad(headers.name, colName))}   ${chalk.bold(pad(headers.value, colValue))}   ${chalk.bold(pad(headers.type, colType))}   ${chalk.bold(headers.envs)}`
   );
 
   for (const row of rows) {
     console.log(
-      `  ${pad(row.name, colName)}   ${chalk.dim(pad(row.type, colType))}   ${row.envs}`
+      `  ${pad(row.name, colName)}   ${chalk.dim(pad(row.value, colValue))}   ${chalk.dim(pad(row.type, colType))}   ${row.envs}`
     );
   }
 
